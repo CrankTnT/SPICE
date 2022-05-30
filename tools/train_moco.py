@@ -30,6 +30,7 @@ import moco.loader
 import moco.builder
 from moco.stl10 import STL10
 from moco.cifar import CIFAR10, CIFAR100
+from moco.mydata import mydata
 
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -40,15 +41,15 @@ parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 #                    help='path to dataset')
 #parser.add_argument('--data', metavar='DIR', default='./datasets/stl10',
 #                    help='path to dataset')
-parser.add_argument('--data_type', default='cifar10',
+parser.add_argument('--data_type', default='mydata',
                     help='path to dataset')
-parser.add_argument('--data', metavar='DIR', default='./datasets/cifar10',
+parser.add_argument('--data', metavar='DIR', default='./datasets/mydata',
                     help='path to dataset')
 parser.add_argument('--all', default=1, type=int,
                     help='1 denotes using both train and test data')
 parser.add_argument('--img_size', default=96, type=int,
                     help='image size')
-parser.add_argument('--save_folder', metavar='DIR', default='./results/cifar10/moco',
+parser.add_argument('--save_folder', metavar='DIR', default='./results/mydata/moco',
                     help='path to dataset')
 parser.add_argument('--save-freq', default=1, type=int, metavar='N',
                     help='frequency of saving model')
@@ -75,7 +76,7 @@ parser.add_argument('--wd', '--weight-decay', default=1e-4, type=float,
                     dest='weight_decay')
 parser.add_argument('--print-freq', default=10, type=int,
                     metavar='N', help='print frequency (default: 10)')
-parser.add_argument('--resume', default='./results/cifar10/moco/checkpoint_last.pth.tar', type=str, metavar='PATH',
+parser.add_argument('--resume', default='./results/mydata/moco/checkpoint_last.pth.tar', type=str, metavar='PATH',
                     help='path to latest checkpoint (default: none)')
 parser.add_argument('--world-size', default=1, type=int,
                     help='number of nodes for distributed training')
@@ -283,6 +284,9 @@ def main_worker(gpu, ngpus_per_node, args):
                                 transform=moco.loader.TwoCropsTransform(transforms.Compose(augmentation)))
     elif args.data_type == 'cifar100':
         train_dataset = CIFAR100(args.data, all=args.all,
+                                 transform=moco.loader.TwoCropsTransform(transforms.Compose(augmentation)))
+    elif args.data_type == 'mydata':
+        train_dataset = mydata(args.data, all=args.all,
                                  transform=moco.loader.TwoCropsTransform(transforms.Compose(augmentation)))
     else:
         raise TypeError
